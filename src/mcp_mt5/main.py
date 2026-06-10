@@ -146,6 +146,8 @@ class OrderRequest(BaseModel):
             - 0: ORDER_FILLING_FOK (Fill or Kill)
             - 1: ORDER_FILLING_IOC (Immediate or Cancel)
             - 2: ORDER_FILLING_RETURN (Return remaining)
+        
+        position: Position ticket for closing or modifying an existing position (optional)
     """
 
     action: int
@@ -160,6 +162,7 @@ class OrderRequest(BaseModel):
     comment: str | None = None
     type_time: int | None = None
     type_filling: int | None = None
+    position: int | None = None
 
     @field_validator("volume")
     @classmethod
@@ -758,7 +761,7 @@ def copy_rates_from_date(
     Returns:
         List[Dict[str, Any]]: List of bars with time, open, high, low, close, tick_volume, spread, and real_volume.
     """
-    rates = mt5.copy_rates_from_date(symbol, get_timeframe_constant(timeframe), date_from, count)
+    rates = mt5.copy_rates_from(symbol, get_timeframe_constant(timeframe), date_from, count)
     if rates is None:
         logger.error(
             f"Failed to copy rates for {symbol} from date {date_from}, error code: {mt5.last_error()}"
@@ -1549,3 +1552,19 @@ def get_trade_actions() -> str:
         result += f"{name}: {value}\n"
 
     return result
+
+
+if __name__ == "__main__":
+    import os
+    from dotenv import load_dotenv
+
+    load_dotenv()
+    transport = os.getenv("MT5_MCP_TRANSPORT", "stdio")
+
+    if transport in ("http", "sse"):
+        host = os.getenv("MT5_MCP_HOST", "127.0.0.1")
+        port = int(os.getenv("MT5_MCP_PORT", "8000"))
+        mcp.run(transport=transport, host=host, port=port)
+    else:
+        mcp.run(transport="stdio")
+

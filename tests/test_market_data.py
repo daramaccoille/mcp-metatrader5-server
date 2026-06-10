@@ -116,7 +116,7 @@ class TestCopyRatesFromPosJsonSerialization:
 class TestCopyRatesFromDateJsonSerialization:
     """Test that copy_rates_from_date returns JSON-serializable data"""
 
-    @patch("mcp_mt5.main.mt5.copy_rates_from_date")
+    @patch("mcp_mt5.main.mt5.copy_rates_from")
     def test_returns_json_serializable_data(self, mock_copy_rates, mock_rates_data):
         """Test that the returned data can be serialized to JSON"""
         mock_copy_rates.return_value = mock_rates_data
