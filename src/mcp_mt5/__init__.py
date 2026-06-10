@@ -1,14 +1,9 @@
 """MetaTrader 5 MCP Server"""
 
+from mcp_mt5.main import mcp
+
 __version__ = "0.1.4"
 __all__ = ["main", "mcp"]
-
-
-def __getattr__(name):
-    if name == "mcp":
-        from .main import mcp
-        return mcp
-    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 
 def main():
@@ -16,8 +11,6 @@ def main():
     import os
 
     from dotenv import load_dotenv
-
-    from .main import mcp
 
     # Load environment variables from .env file if it exists
     load_dotenv()
@@ -36,4 +29,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
